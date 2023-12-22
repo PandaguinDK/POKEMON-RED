@@ -2,17 +2,19 @@
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Pokémon charmander = new Pokémon(pokémonNames.Charmander, 5, genders.Male);
-            Console.WriteLine($" Your pokémon is:{charmander.name} {Environment.NewLine} Gender: {charmander.gender} {Environment.NewLine} " +
-                $"LVL: {charmander.level} {Environment.NewLine}  {Environment.NewLine} Stats: {Environment.NewLine}  HP: {charmander.stats[0]} {Environment.NewLine} " +
-                $"ATK: {charmander.stats[1]} {Environment.NewLine} DEF: {charmander.stats[2]} {Environment.NewLine} " +
-                $"SPA: {charmander.stats[3]} {Environment.NewLine} SPD: {charmander.stats[4]} {Environment.NewLine} " +
-                $"SPE: {charmander.stats[5]} {Environment.NewLine} {Environment.NewLine} IVs: {Environment.NewLine} HP: {charmander.IVs[0]} {Environment.NewLine} " +
-                $"ATK: {charmander.IVs[1]} {Environment.NewLine} DEF: {charmander.IVs[2]} {Environment.NewLine} " +
-                $"SPA: {charmander.IVs[3]} {Environment.NewLine} SPD: {charmander.IVs[4]} {Environment.NewLine} " +
-                $"SPE: {charmander.IVs[5]} {Environment.NewLine} ");
+            Pokémon pokemon = new(PokémonNames.Charmander, 5, Genders.Male);
+            Console.WriteLine($" Your pokémon is: {pokemon.name} {Environment.NewLine} Gender: {pokemon.gender} {Environment.NewLine} " +
+                $"LVL: {pokemon.level} {Environment.NewLine}  {Environment.NewLine} Moves: {Environment.NewLine} {pokemon.moves[0]}" +
+                $"{Environment.NewLine} {pokemon.moves[1]} {Environment.NewLine} {pokemon.moves[2]}" +
+                $"{Environment.NewLine} {pokemon.moves[3]} {Environment.NewLine} {Environment.NewLine}Stats: {Environment.NewLine}  HP: {pokemon.stats[0]} {Environment.NewLine} " +
+                $"ATK: {pokemon.stats[1]} {Environment.NewLine} DEF: {pokemon.stats[2]} {Environment.NewLine} " +
+                $"SPA: {pokemon.stats[3]} {Environment.NewLine} SPD: {pokemon.stats[4]} {Environment.NewLine} " +
+                $"SPE: {pokemon.stats[5]} {Environment.NewLine} {Environment.NewLine} IVs: {Environment.NewLine}  HP: {pokemon.IVs[0]} {Environment.NewLine} " +
+                $"ATK: {pokemon.IVs[1]} {Environment.NewLine} DEF: {pokemon.IVs[2]} {Environment.NewLine} " +
+                $"SPA: {pokemon.IVs[3]} {Environment.NewLine} SPD: {pokemon.IVs[4]} {Environment.NewLine} " +
+                $"SPE: {pokemon.IVs[5]} {Environment.NewLine} ");
 
 
         }
