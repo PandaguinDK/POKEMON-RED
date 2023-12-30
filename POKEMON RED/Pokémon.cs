@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
@@ -11,7 +13,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace POKEMON_RED
 {
-    internal class Pokémon
+
+    public class Pokémon
     {
         public PokémonNames name;
         public List<Types> type;
@@ -102,15 +105,20 @@ namespace POKEMON_RED
             IVs[0] = rnd.Next(0, 31);
 
             //  Formula to calculate the HP stat
+            int hpBaseStat = GetBaseStats()[0];
             double EVBonus = Math.Floor(Math.Sqrt(EVs[0]) / 4);
-            stats[0] = (int)Math.Floor(Convert.ToDouble(((int)(GetBaseStats()[0] + (IVs[0] * 2) + EVBonus * 81) / 100) + 81 + 10));
+            double middleCalculation = Math.Floor(((hpBaseStat + 7) * 2 + EVBonus) * level) / 100;
+            stats[0] = (int)Math.Floor(middleCalculation) + level + 10;
 
 
             //  Formula to calculate the rest of the stats 
             for (int i = 1; i < 6; i++)
             {
                 IVs[i] = rnd.Next(0, 31);
-                stats[i] = ((2 * GetBaseStats()[i] + 15) * level) / 100 + 5 + (IVs[i] / 100 * level);
+                int statBaseStat = GetBaseStats()[i];
+                EVBonus = Math.Floor(Math.Sqrt(EVs[0]) / 4);
+                middleCalculation = Math.Floor(((statBaseStat + 7) * 2 + EVBonus) * level) / 100;
+                stats[i] = (int)Math.Floor(middleCalculation) + 5;
             }
             return stats;
         }
@@ -1608,6 +1616,1081 @@ namespace POKEMON_RED
             return possibleMoves;
         }
 
+        public int GetExperienceYield()
+        {
+            int experienceYield = 0;
+            switch (name)
+            {
+                case PokémonNames.Bulbasaur:
+                    experienceYield = 64;
+                    break;
+
+                case PokémonNames.Ivysaur:
+                    experienceYield = 141;
+                    break;
+
+                case PokémonNames.Venusaur:
+                    experienceYield = 208;
+                    break;
+
+                case PokémonNames.Charmander:
+                    experienceYield = 65;
+                    break;
+
+                case PokémonNames.Charmeleon:
+                    experienceYield = 142;
+                    break;
+
+                case PokémonNames.Charizard:
+                    experienceYield = 209;
+                    break;
+
+                case PokémonNames.Squirtle:
+                    experienceYield = 66;
+                    break;
+
+                case PokémonNames.Wartortle:
+                    experienceYield = 143;
+                    break;
+
+                case PokémonNames.Blastoise:
+                    experienceYield = 210;
+                    break;
+
+                case PokémonNames.Caterpie:
+                    experienceYield = 53;
+                    break;
+
+                case PokémonNames.Metapod:
+                    experienceYield = 72;
+                    break;
+
+                case PokémonNames.Butterfree:
+                    experienceYield = 160;
+                    break;
+
+                case PokémonNames.Weedle:
+                    experienceYield = 52;
+                    break;
+
+                case PokémonNames.Kakuna:
+                    experienceYield = 71;
+                    break;
+
+                case PokémonNames.Beedrill:
+                    experienceYield = 159;
+                    break;
+
+                case PokémonNames.Pidgey:
+                    experienceYield = 55;
+                    break;
+
+                case PokémonNames.Pidgeotto:
+                    experienceYield = 113;
+                    break;
+
+                case PokémonNames.Pidgeot:
+                    experienceYield = 172;
+                    break;
+
+                case PokémonNames.Rattata:
+                    experienceYield = 57;
+                    break;
+
+                case PokémonNames.Raticate:
+                    experienceYield = 116;
+                    break;
+
+                case PokémonNames.Spearow:
+                    experienceYield = 58;
+                    break;
+
+                case PokémonNames.Fearow:
+                    experienceYield = 162;
+                    break;
+
+                case PokémonNames.Ekans:
+                    experienceYield = 62;
+                    break;
+
+                case PokémonNames.Arbok:
+                    experienceYield = 147;
+                    break;
+
+                case PokémonNames.Pikachu:
+                    experienceYield = 82;
+                    break;
+
+                case PokémonNames.Raichu:
+                    experienceYield = 122;
+                    break;
+
+                case PokémonNames.Sandshrew:
+                    experienceYield = 93;
+                    break;
+
+                case PokémonNames.Sandslash:
+                    experienceYield = 163;
+                    break;
+
+                case PokémonNames.Nidoran_Female:
+                    experienceYield = 59;
+                    break;
+
+                case PokémonNames.Nidorina:
+                    experienceYield = 117;
+                    break;
+
+                case PokémonNames.Nidoqueen:
+                    experienceYield = 194;
+                    break;
+
+                case PokémonNames.Nidoran_Male:
+                    experienceYield = 60;
+                    break;
+
+                case PokémonNames.Nidorino:
+                    experienceYield = 118;
+                    break;
+
+                case PokémonNames.Nidoking:
+                    experienceYield = 195;
+                    break;
+
+                case PokémonNames.Clefairy:
+                    experienceYield = 68;
+                    break;
+
+                case PokémonNames.Clefable:
+                    experienceYield = 129;
+                    break;
+
+                case PokémonNames.Vulpix:
+                    experienceYield = 63;
+                    break;
+
+                case PokémonNames.Ninetales:
+                    experienceYield = 178;
+                    break;
+
+                case PokémonNames.Jigglypuff:
+                    experienceYield = 76;
+                    break;
+
+                case PokémonNames.Wigglytuff:
+                    experienceYield = 109;
+                    break;
+
+                case PokémonNames.Zubat:
+                    experienceYield = 54;
+                    break;
+
+                case PokémonNames.Golbat:
+                    experienceYield = 171;
+                    break;
+
+                case PokémonNames.Oddish:
+                    experienceYield = 78;
+                    break;
+
+                case PokémonNames.Gloom:
+                    experienceYield = 132;
+                    break;
+
+                case PokémonNames.Vileplume:
+                    experienceYield = 184;
+                    break;
+
+                case PokémonNames.Paras:
+                    experienceYield = 70;
+                    break;
+
+                case PokémonNames.Parasect:
+                    experienceYield = 128;
+                    break;
+
+                case PokémonNames.Venonat:
+                    experienceYield = 75;
+                    break;
+
+                case PokémonNames.Venomoth:
+                    experienceYield = 138;
+                    break;
+
+                case PokémonNames.Diglett:
+                    experienceYield = 81;
+                    break;
+
+                case PokémonNames.Dugtrio:
+                    experienceYield = 153;
+                    break;
+
+                case PokémonNames.Meowth:
+                    experienceYield = 69;
+                    break;
+
+                case PokémonNames.Persian:
+                    experienceYield = 148;
+                    break;
+
+                case PokémonNames.Psyduck:
+                    experienceYield = 80;
+                    break;
+
+                case PokémonNames.Golduck:
+                    experienceYield = 174;
+                    break;
+
+                case PokémonNames.Mankey:
+                    experienceYield = 74;
+                    break;
+
+                case PokémonNames.Primeape:
+                    experienceYield = 149;
+                    break;
+
+                case PokémonNames.Growlithe:
+                    experienceYield = 91;
+                    break;
+
+                case PokémonNames.Arcanine:
+                    experienceYield = 213;
+                    break;
+
+                case PokémonNames.Poliwag:
+                    experienceYield = 77;
+                    break;
+
+                case PokémonNames.Poliwhirl:
+                    experienceYield = 131;
+                    break;
+
+                case PokémonNames.Poliwrath:
+                    experienceYield = 185;
+                    break;
+
+                case PokémonNames.Abra:
+                    experienceYield = 73;
+                    break;
+
+                case PokémonNames.Kadabra:
+                    experienceYield = 145;
+                    break;
+
+                case PokémonNames.Alakazam:
+                    experienceYield = 186;
+                    break;
+
+                case PokémonNames.Machop:
+                    experienceYield = 88;
+                    break;
+
+                case PokémonNames.Machoke:
+                    experienceYield = 146;
+                    break;
+
+                case PokémonNames.Machamp:
+                    experienceYield = 193;
+                    break;
+
+                case PokémonNames.Bellsprout:
+                    experienceYield = 84;
+                    break;
+
+                case PokémonNames.Weepinbell:
+                    experienceYield = 151;
+                    break;
+
+                case PokémonNames.Victreebel:
+                    experienceYield = 191;
+                    break;
+
+                case PokémonNames.Tentacool:
+                    experienceYield = 105;
+                    break;
+
+                case PokémonNames.Tentacruel:
+                    experienceYield = 205;
+                    break;
+
+                case PokémonNames.Geodude:
+                    experienceYield = 86;
+                    break;
+
+                case PokémonNames.Graveler:
+                    experienceYield = 134;
+                    break;
+
+                case PokémonNames.Golem:
+                    experienceYield = 177;
+                    break;
+
+                case PokémonNames.Ponyta:
+                    experienceYield = 152;
+                    break;
+
+                case PokémonNames.Rapidash:
+                    experienceYield = 192;
+                    break;
+
+                case PokémonNames.Slowpoke:
+                    experienceYield = 99;
+                    break;
+
+                case PokémonNames.Slowbro:
+                    experienceYield = 164;
+                    break;
+
+                case PokémonNames.Magnemite:
+                    experienceYield = 89;
+                    break;
+
+                case PokémonNames.Magneton:
+                    experienceYield = 161;
+                    break;
+
+                case PokémonNames.Farfetchd:
+        experienceYield = 94;
+                    break;
+
+                case PokémonNames.Doduo:
+                    experienceYield = 96;
+                    break;
+
+                case PokémonNames.Dodrio:
+                    experienceYield = 158;
+                    break;
+
+                case PokémonNames.Seel:
+                    experienceYield = 100;
+                    break;
+
+                case PokémonNames.Dewgong:
+                    experienceYield = 176;
+                    break;
+
+                case PokémonNames.Grimer:
+                    experienceYield = 90;
+                    break;
+
+                case PokémonNames.Muk:
+                    experienceYield = 157;
+                    break;
+
+                case PokémonNames.Shellder:
+                    experienceYield = 97;
+                    break;
+
+                case PokémonNames.Cloyster:
+                    experienceYield = 203;
+                    break;
+
+                case PokémonNames.Gastly:
+                    experienceYield = 95;
+                    break;
+
+                case PokémonNames.Haunter:
+                    experienceYield = 126;
+                    break;
+
+                case PokémonNames.Gengar:
+                    experienceYield = 190;
+                    break;
+
+                case PokémonNames.Onix:
+                    experienceYield = 108;
+                    break;
+
+                case PokémonNames.Drowzee:
+                    experienceYield = 102;
+                    break;
+
+                case PokémonNames.Hypno:
+                    experienceYield = 165;
+                    break;
+
+                case PokémonNames.Krabby:
+                    experienceYield = 115;
+                    break;
+
+                case PokémonNames.Kingler:
+                    experienceYield = 206;
+                    break;
+
+                case PokémonNames.Voltorb:
+                    experienceYield = 103;
+                    break;
+
+                case PokémonNames.Electrode:
+                    experienceYield = 150;
+                    break;
+
+                case PokémonNames.Exeggcute:
+                    experienceYield = 98;
+                    break;
+
+                case PokémonNames.Exeggutor:
+                    experienceYield = 212;
+                    break;
+
+                case PokémonNames.Cubone:
+                    experienceYield = 87;
+                    break;
+
+                case PokémonNames.Marowak:
+                    experienceYield = 124;
+                    break;
+
+                case PokémonNames.Hitmonlee:
+                    experienceYield = 139;
+                    break;
+
+                case PokémonNames.Hitmonchan:
+                    experienceYield = 140;
+                    break;
+
+                case PokémonNames.Lickitung:
+                    experienceYield = 127;
+                    break;
+
+                case PokémonNames.Koffing:
+                    experienceYield = 114;
+                    break;
+
+                case PokémonNames.Weezing:
+                    experienceYield = 173;
+                    break;
+
+                case PokémonNames.Rhyhorn:
+                    experienceYield = 135;
+                    break;
+
+                case PokémonNames.Rhydon:
+                    experienceYield = 204;
+                    break;
+
+                case PokémonNames.Chansey:
+                    experienceYield = 255;
+                    break;
+
+                case PokémonNames.Tangela:
+                    experienceYield = 166;
+                    break;
+
+                case PokémonNames.Kangaskhan:
+                    experienceYield = 175;
+                    break;
+
+                case PokémonNames.Horsea:
+                    experienceYield = 83;
+                    break;
+
+                case PokémonNames.Seadra:
+                    experienceYield = 155;
+                    break;
+
+                case PokémonNames.Goldeen:
+                    experienceYield = 111;
+                    break;
+
+                case PokémonNames.Seaking:
+                    experienceYield = 170;
+                    break;
+
+                case PokémonNames.Staryu:
+                    experienceYield = 106;
+                    break;
+
+                case PokémonNames.Starmie:
+                    experienceYield = 207;
+                    break;
+
+                case PokémonNames.Mr_Mime:
+                    experienceYield = 136;
+                    break;
+
+                case PokémonNames.Scyther:
+                    experienceYield = 187;
+                    break;
+
+                case PokémonNames.Jynx:
+                    experienceYield = 137;
+                    break;
+
+                case PokémonNames.Electabuzz:
+                    experienceYield = 156;
+                    break;
+
+                case PokémonNames.Magmar:
+                    experienceYield = 167;
+                    break;
+
+                case PokémonNames.Pinsir:
+                    experienceYield = 200;
+                    break;
+
+                case PokémonNames.Tauros:
+                    experienceYield = 211;
+                    break;
+
+                case PokémonNames.Magikarp:
+                    experienceYield = 20;
+                    break;
+
+                case PokémonNames.Gyarados:
+                    experienceYield = 214;
+                    break;
+
+                case PokémonNames.Lapras:
+                    experienceYield = 219;
+                    break;
+
+                case PokémonNames.Ditto:
+                    experienceYield = 61;
+                    break;
+
+                case PokémonNames.Eevee:
+                    experienceYield = 92;
+                    break;
+
+                case PokémonNames.Vaporeon:
+                    experienceYield = 196;
+                    break;
+
+                case PokémonNames.Jolteon:
+                    experienceYield = 197;
+                    break;
+
+                case PokémonNames.Flareon:
+                    experienceYield = 198;
+                    break;
+
+                case PokémonNames.Porygon:
+                    experienceYield = 130;
+                    break;
+
+                case PokémonNames.Omanyte:
+                    experienceYield = 120;
+                    break;
+
+                case PokémonNames.Omastar:
+                    experienceYield = 199;
+                    break;
+
+                case PokémonNames.Kabuto:
+                    experienceYield = 119;
+                    break;
+
+                case PokémonNames.Kabutops:
+                    experienceYield = 201;
+                    break;
+
+                case PokémonNames.Aerodactyl:
+                    experienceYield = 202;
+                    break;
+
+                case PokémonNames.Snorlax:
+                    experienceYield = 154;
+                    break;
+
+                case PokémonNames.Articuno:
+                    experienceYield = 215;
+                    break;
+
+                case PokémonNames.Zapdos:
+                    experienceYield = 216;
+                    break;
+
+                case PokémonNames.Moltres:
+                    experienceYield = 217;
+                    break;
+
+                case PokémonNames.Dratini:
+                    experienceYield = 67;
+                    break;
+
+                case PokémonNames.Dragonair:
+                    experienceYield = 144;
+                    break;
+
+                case PokémonNames.Dragonite:
+                    experienceYield = 218;
+                    break;
+
+                case PokémonNames.Mewtwo:
+                    experienceYield = 220;
+                    break;
+
+                case PokémonNames.Mew:
+                    experienceYield = 64;
+                    break;
+            }
+            return experienceYield;
+        }
+
+        public ExperienceGroup GetExperienceGroup()
+        {
+            ExperienceGroup experienceGroup = new();
+            switch (name)
+            {
+                case PokémonNames.Bulbasaur:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Ivysaur:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Venusaur:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Charmander:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Charmeleon:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Charizard:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Squirtle:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Wartortle:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Blastoise:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Caterpie:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Metapod:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Butterfree:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Weedle:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Kakuna:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Beedrill:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Pidgey:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Pidgeotto:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Pidgeot:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Rattata:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Raticate:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Spearow:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Fearow:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Ekans:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Arbok:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Pikachu:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Raichu:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Sandshrew:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Sandslash:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Nidoran_Female:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Nidorina:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Nidoqueen:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Nidoran_Male
+:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Nidorino:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Nidoking:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Clefairy:
+                    experienceGroup = ExperienceGroup.Fast;
+                    break;
+                case PokémonNames.Clefable:
+                    experienceGroup = ExperienceGroup.Fast;
+                    break;
+                case PokémonNames.Vulpix:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Ninetales:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Jigglypuff:
+                    experienceGroup = ExperienceGroup.Fast;
+                    break;
+                case PokémonNames.Wigglytuff:
+                    experienceGroup = ExperienceGroup.Fast;
+                    break;
+                case PokémonNames.Zubat:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Golbat:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Oddish:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Gloom:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Vileplume:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Paras:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Parasect:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Venonat:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Venomoth:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Diglett:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Dugtrio:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Meowth:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Persian:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Psyduck:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Golduck:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Mankey:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Primeape:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Growlithe:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Arcanine:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Poliwag:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Poliwhirl:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Poliwrath:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Abra:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Kadabra:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Alakazam:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Machop:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Machoke:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Machamp:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Bellsprout:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Weepinbell:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Victreebel:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Tentacool:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Tentacruel:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Geodude:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Graveler:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Golem:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Ponyta:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Rapidash:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Slowpoke:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Slowbro:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Magnemite:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Magneton:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Farfetchd:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Doduo:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Dodrio:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Seel:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Dewgong:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Grimer:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Muk:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Shellder:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Cloyster:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Gastly:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Haunter:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Gengar:
+                    experienceGroup = ExperienceGroup.Medium_Slow;
+                    break;
+                case PokémonNames.Onix:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Drowzee:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Hypno:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Krabby:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Kingler:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Voltorb:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Electrode:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Exeggcute:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Exeggutor:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Cubone:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Marowak:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Hitmonlee:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Hitmonchan:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Lickitung:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Koffing:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Weezing:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Rhyhorn:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Rhydon:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Chansey:
+                    experienceGroup = ExperienceGroup.Fast;
+                    break;
+                case PokémonNames.Tangela:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Kangaskhan:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Horsea:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Seadra:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Goldeen:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Seaking:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Staryu:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Starmie:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Mr_Mime:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Scyther:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Jynx:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Electabuzz:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Magmar:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Pinsir:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Tauros:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Magikarp:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Gyarados:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Lapras:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Ditto:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Eevee:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Vaporeon:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Jolteon:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Flareon:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Porygon:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Omanyte:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Omastar:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Kabuto:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Kabutops:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+                case PokémonNames.Aerodactyl:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Snorlax:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Articuno:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Zapdos:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Moltres:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Dratini:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Dragonair:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Dragonite:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Mewtwo:
+                    experienceGroup = ExperienceGroup.Slow;
+                    break;
+                case PokémonNames.Mew:
+                    experienceGroup = ExperienceGroup.Medium_Fast;
+                    break;
+            }
+            return experienceGroup;
+        }
+
         public int[] GetBaseStats()
         {
             int[] baseStats = new int[6];
@@ -2991,7 +4074,6 @@ namespace POKEMON_RED
         }
     }
 
-
     public class MoveInfoAttribute : Attribute
     {
         public Types Typing { get; }
@@ -3031,6 +4113,15 @@ namespace POKEMON_RED
         }
     }
 
+    public enum ExperienceGroup
+    {
+        Medium_Fast,
+        Slightly_Fast,
+        Slightly_Slow,
+        Medium_Slow,
+        Fast,
+        Slow,
+    }
 
     public enum PokémonNames
     {
