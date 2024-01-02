@@ -15,31 +15,47 @@ namespace POKEMON_RED
 {
 
     public class Pokémon
-    {
-        public PokémonNames name;
-        public List<Types> type;
-        public int level;
-        public Genders gender;
-        public Dictionary<int, List<Moves>> movesLearnset = new();
-        public List<Moves> possibleMoves = new();
-        public Moves[] moves = new Moves[4];
-        public int[] stats = new int[6];
-        public int[] statsChanges = new int[6];
-        public int[] EVs = new int[6];
-        public int[] IVs = new int[6];
-        public Status status;
-        public PokémonTypesAttribute pokemonTypes = new();
-        public Dictionary<string, int> baseStats = new();
+    { 
+        public PokémonNames name { get; set; }
+        public int pokémonHP { get;set; }
+        public List<Types> type { get; set; }
+        public int level { get; set; }
+        public Genders gender { get; set; }
+        public Dictionary<int, List<Moves>> movesLearnset { get; set; }
+        public List<Moves> possibleMoves { get; set; }
+        public Moves[] moves { get; set; }
+        public int[] stats { get; set; }
+        public int[] statsMultiplier { get; set; }
+        public int[] EVs { get; set; }
+        public int[] IVs { get; set; }
+        public Status status { get; set; }
+        public PokémonTypesAttribute pokemonTypes { get; set; }
+        public Dictionary<string, int> baseStats { get; set; }
 
+        public Pokémon()
+        {
+
+        }
         
         public Pokémon(PokémonNames Name, int Level, Genders Gender)
         {
+            MoveInfoHelper moveInfoHelper = new();
+            MoveInfoAttribute moveInfo = moveInfoHelper.GetMoveInfoAttribute(Moves.Absorb);
+            TypesInfoHelper typesInfoHelper = new();
+            PokémonTypesAttribute typeInfo = new TypesInfoHelper().GetTypeInfoAttribute(name);
+
+
             this.name = Name;
-            this.type = pokemonTypes.GetPokemonTyping();
+            this.type = typeInfo.Typing;
             this.level = Level;
             this.gender = Gender;
             this.movesLearnset = GetMoves(Name);
             this.possibleMoves = GetPossibleMoves();
+            this.moves = new Moves[4];
+            this.stats = new int[6];
+            this.statsMultiplier = new int[6];
+            this.EVs = new int[6];
+            this.IVs = new int[6];
 
             //  Try and catch here in case there isn't 4 moves in the possibleMoves list
             try
@@ -69,6 +85,7 @@ namespace POKEMON_RED
             }
             this.EVs = new int[] { 0, 0, 0, 0, 0, 0 }
 ;           this.stats = GetStats();
+            this.pokémonHP = stats[0];
 
         }
 
@@ -1950,7 +1967,7 @@ namespace POKEMON_RED
                     break;
 
                 case PokémonNames.Farfetchd:
-        experienceYield = 94;
+                    experienceYield = 94;
                     break;
 
                 case PokémonNames.Doduo:
@@ -4072,16 +4089,57 @@ namespace POKEMON_RED
             }
             return baseStats;
         }
+
+        //public bool Attack(Moves moveToUseOnOpponent)
+        //{
+        //    //regn ud mod alle dine stats
+        //    this
+
+        //    //hvis hp == 0 return true (den er død)
+        //    return
+        //        //eellers false;
+        //}
+    }
+
+    public enum Effects
+    {
+        NO_ADDITIONAL_EFFECT,
+        TWO_TO_FIVE_ATTACKS_EFFECT,
+        PAY_DAY_EFFECT,
+
+    }
+
+    public class MoveInfoHelper
+    {
+        public MoveInfoAttribute GetMoveInfoAttribute(Enum value)
+        {
+            Type type = value.GetType();
+            MemberInfo[] memberInfo = type.GetMember(value.ToString());
+
+            if (memberInfo.Length > 0)
+            {
+                object[] attributes = memberInfo[0].GetCustomAttributes(typeof(MoveInfoAttribute), false);
+
+                if (attributes.Length > 0)
+                {
+                    return (MoveInfoAttribute)attributes[0];
+                }
+            }
+
+            return null;
+        }
     }
 
     public class MoveInfoAttribute : Attribute
     {
         public Types Typing { get; }
         public Categories Category { get; }
+        public Effects Effect { get; }
         public int Power { get; }
         public int Accuracy { get; }
         public int PP { get; }
 
+        
 
         public MoveInfoAttribute(Types typing, Categories category, int power, int accuracy, int pp)
         {
@@ -4093,23 +4151,36 @@ namespace POKEMON_RED
         }
     }
 
+    public class TypesInfoHelper
+    {
+        public PokémonTypesAttribute GetTypeInfoAttribute(Enum value)
+        {
+            Type type = value.GetType();
+            MemberInfo[] memberInfo = type.GetMember(value.ToString());
+
+            if (memberInfo.Length > 0)
+            {
+                object[] attributes = memberInfo[0].GetCustomAttributes(typeof(PokémonTypesAttribute), false);
+
+                if (attributes.Length > 0)
+                {
+                    return (PokémonTypesAttribute)attributes[0];
+                }
+            }
+
+            return null;
+        }
+    }
+
     public class PokémonTypesAttribute : Attribute
     {
         public List<Types> Typing = new();
 
-        public PokémonTypesAttribute()
-        {
-
-        }
 
         public PokémonTypesAttribute(Types typing, Types typing2)
         {
             this.Typing.Add(typing);
             this.Typing.Add(typing2);
-        }
-        public List<Types> GetPokemonTyping()
-        {
-            return Typing;
         }
     }
 

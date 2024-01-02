@@ -1,0 +1,2 @@
+﻿a:Hello there! Welcome to the world of Pokémon./My name is OAK! People call me the Pokémon professor!/This world is inhabited by creatures called Pokémon./For some people, Pokémon are pets. Others use them for fights./Myself... I study Pokémon as a profession./First, what is your name?
+b:This is my grandson. He's been your rival since you were a baby./...Erm, what is his name again?
