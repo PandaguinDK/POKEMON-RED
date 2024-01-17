@@ -46,8 +46,6 @@ namespace POKEMON_RED
             this.playerPokemons = new();
             this.rivalPokemons = new();
 
-            SaveGame();
-
             Dialogue();
         }
 
