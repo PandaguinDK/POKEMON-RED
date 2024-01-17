@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -11,6 +15,8 @@ namespace POKEMON_RED
 {
     internal class Game
     {
+        public int dialogueStage { get; set; }
+        public bool hasStarterPokemon { get; set; }
         public int userInputErrorMessageDelay { get; set; }
         public int textTime {  get; set; }
         public bool hasBeenToKanto_Route1 { get; set; }
@@ -24,10 +30,14 @@ namespace POKEMON_RED
         public List<Pokémon> playerPokemons { get; set; }
         public string playerName { get; set; }
         public string rivalName { get; set; }
+        public List<Pokémon> rivalsPokemon { get; set; }
         public Game()
         {
+            this.dialogueStage = 1;
+            this.hasStarterPokemon = false;
             this.userInputErrorMessageDelay = 3000;
             this.textTime = 1000;
+            this.textTime = 0;
             this.hasBeenToKanto_Route1 = false;
             this.hasBeenToProfessor_Oaks_Laboratory = false;
             this.playerLocation = Location.Players_house;
@@ -35,54 +45,16 @@ namespace POKEMON_RED
             this.availableLocations.Add(Location.Players_house);
             this.playerPokemons = new();
             this.playerPokemons.Add(new Pokémon(PokémonNames.Charmander, 5, Genders.Male));
-            this.playerPokemons.Add(new Pokémon(PokémonNames.Charmeleon, 23, Genders.Male));
+            this.playerPokemons.Add(new Pokémon(PokémonNames.Mew, 23, Genders.Male));
             this.playerPokemons.Add(new Pokémon(PokémonNames.Mewtwo, 87, Genders.Male));
 
-            Battle battle = new Battle(playerPokemons[0], playerPokemons[1]) ;
+            Battle battle = new Battle(playerPokemons, playerPokemons, playerName, rivalName);
 
-            Console.WriteLine(battle.CalculateDamage(playerPokemons[0], playerPokemons[1], Moves.Absorb));
+            //Console.WriteLine(battle.CalculateDamage(playerPokemons[0], playerPokemons[1], Moves.Absorb));
 
-            Thread.Sleep(50000);
+            //Thread.Sleep(50000);
 
-            LoadTexts("introduction");
-            Text("introduction", "a");
-            playerName = GetUserInput(15);
-            Text($"Right! So your name is {playerName}!");
-            Text("introduction", "b");
-            rivalName = GetUserInput(15);
-            Text($"{playerName}! Your very own Pokémon legend is about to unfold!");
-            Text("A world of dreams and adventures with Pokémon awaits! Let's go!");
-            Thread.Sleep(2000);
-            Console.Clear();
-            textDisplayed.Clear();
-
-            Interaction();
-
-
-            string userInput = string.Empty;
-            while (userInput.ToLower() != "a")
-            {
-                Console.WriteLine($"What do you want to do {playerName}?                                                     Current Location: {playerLocation}");
-                Console.WriteLine("A. Go down the stairs");
-                Console.WriteLine("B. Watch TV");
-                userInput = Console.ReadLine();
-                if (userInput.ToLower() == "b")
-                {
-                    Text("There's a movie on TV. Four boys are walking on railrod tracks.");
-                    Text("I better go too.");
-                    Thread.Sleep(3000);
-                    Console.Clear();
-                }
-                else if (userInput.ToLower() != "a")
-                {
-                    UserInputErrorMessage(userInput);
-                    Console.Clear();
-                }
-            }
-            Text("Mother: Right. All boys leave home some day. It said so on TV");
-            Text("Professor Oak, next door, is looking for you.");
-            Console.Clear();
-            Interaction();
+            Dialogue();
         }
 
         public string GetUserInput(int maxLength)
@@ -98,30 +70,108 @@ namespace POKEMON_RED
 
         public void LoadTexts(string file)
         {
-            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\textfiles\\";
-            using (StreamReader reader = new StreamReader($"{path}{file}.txt"))
+            try
             {
-                string line = reader.ReadLine();
-
-                while (line != null)
+                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\textfiles\\";
+                using (StreamReader reader = new StreamReader($"{path}{file}.txt"))
                 {
-                    string[] parts = line.Split(':');
+                    string line = reader.ReadLine();
 
-                    string[] texts = parts[1].Split("/");
-                    string key = parts[0];
-
-                    List<string> messages = new();
-
-                    foreach (string text in texts)
+                    while (line != null)
                     {
-                        messages.Add(text);
+                        string[] parts = line.Split(';');
+
+                        string[] texts = parts[1].Split("/");
+                        string key = parts[0];
+
+                        List<string> messages = new();
+
+                        foreach (string text in texts)
+                        {
+                            messages.Add(text);
+                        }
+
+                        Texts.Add(key, messages);
+
+                        line = reader.ReadLine();
                     }
-
-                    Texts.Add(key, messages);
-
-                    line = reader.ReadLine();
                 }
             }
+            //In case text is already loaded
+            catch (ArgumentException)
+            {
+
+            }
+        }
+
+        public void Dialogue()
+        {
+            switch(dialogueStage)
+            {
+                case 1:
+                    LoadTexts("introduction");
+                    Text("introduction", "a");
+                    playerName = GetUserInput(15);
+                    Text($"Right! So your name is {playerName}!");
+                    Text("introduction", "b");
+                    rivalName = GetUserInput(15);
+                    Text($"{playerName}! Your very own Pokémon legend is about to unfold!");
+                    Text("A world of dreams and adventures with Pokémon awaits! Let's go!");
+                    break;
+                case 2:
+                    LoadTexts("route1");
+                    Text("route1", "a");
+                    availableLocations.Add(Location.Kanto_Route_1);
+                    playerLocation = Location.Professor_Oaks_Laboratory;
+                    break;
+                case 3:
+                    if (hasStarterPokemon == false)
+                    {
+                        Text($"{rivalName}: Gramps! I'm fed up with waiting!");
+                        Text($"Oak: {rivalName}? Let me think... Oh, that's right, I told you to come!");
+                        Text("Just wait!");
+                        Text($"Here, {playerName}! There are 3 POKEMON here! Haha! They are inside the");
+                        Text("POKE BALLS. When I was young, I was a serious POKEMON trainer.");
+                        Text("In my old age, I have only 3 left, but you can have one! Choose!");
+                        Text($"{rivalName}: Hey! Gramps! What about me?");
+                        Text($"Oak: Be patient! {rivalName}, you can have one too!");
+                        Text($"Now, {playerName}, which POKEMON do you want?");
+                        Text("1. Bulbasaur      2. Charmander       3. Squirtle");
+                        string userInput = GetUserInput(1);
+                        while (userInput != "1" || userInput != "2" || userInput != "3")
+                        {
+                            Console.Clear();
+                            Text("1. Bulbasaur      2. Charmander       3. Squirtle");
+                            userInput = GetUserInput(1);
+                        }
+                        hasStarterPokemon = true;
+                        switch (userInput)
+                        {
+                            case "1":
+                                playerPokemons.Add(new Pokémon(PokémonNames.Bulbasaur, 5, Genders.Male));
+                                break;
+                            case "2":
+                                playerPokemons.Add(new Pokémon(PokémonNames.Charmander, 5, Genders.Male));
+                                break;
+                            case "3":
+                                playerPokemons.Add(new Pokémon(PokémonNames.Squirtle, 5, Genders.Male));
+                                break;
+                        }
+                        LoadTexts("oakResearchLab");
+                        Text("oakResearchLab", "a");
+                        Thread.Sleep(2000);
+                        Console.Clear();
+                        Text("oakResearchLab", "b");
+                        Battle btl = new Battle(this.playerPokemons, this.rivalsPokemon, playerName, rivalName);
+
+                    }
+                    break;
+            }
+            Thread.Sleep(2000);
+            Console.Clear();
+            textDisplayed.Clear();
+            dialogueStage += 1;
+            Interaction();
         }
 
         public void Interaction()
@@ -143,12 +193,23 @@ namespace POKEMON_RED
                     LookAtPokémon();
                     break;
                 case "c":
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Text("Saving the game...");
+                    Thread.Sleep(3000);
+                    SaveGame();
+                    Console.WriteLine("Game saved.");
+                    Thread.Sleep(1000);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Clear();
+                    Interaction();
                     break;
                 case "d":
                     Console.Clear();
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Quitting the game...");
+                    Console.WriteLine("Closing the game...");
                     Thread.Sleep(3000);
+                    Console.ForegroundColor = ConsoleColor.White;
                     Environment.Exit(0);
                     break;
                 default:
@@ -156,6 +217,19 @@ namespace POKEMON_RED
                     Interaction();
                     break;
             }
+        }
+
+        public void SaveGame()
+        {
+            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SaveStates\\saveState.txt";
+
+            StreamWriter writer = new StreamWriter(path);
+
+            string str = JsonSerializer.Serialize(this);
+
+            writer.WriteLine(str);
+
+            writer.Close();
         }
 
         public void Text(string place, string key)
@@ -175,6 +249,8 @@ namespace POKEMON_RED
 
         public void Text(string text)
         {
+            Console.WriteLine(text);
+            return;
             // Bool here makes sure it doesn't write the entire text twice.
             bool displayPreviousText = false;
             string message = null;
@@ -190,7 +266,7 @@ namespace POKEMON_RED
                 displayPreviousText = true;
                 message += c;
                 Console.WriteLine(message);
-                Thread.Sleep(30);
+                Thread.Sleep(1);
                 Console.Clear();
             }
             textDisplayed.Add(text);
@@ -230,8 +306,9 @@ namespace POKEMON_RED
             try
             {
                 int userInput = Convert.ToInt32(Console.ReadLine());
-                playerLocation = availableLocations[userInput];
-                NewLocation();
+                playerLocation = availableLocations[userInput-1];
+                Console.Clear();
+                Dialogue();
             }
             catch (FormatException)
             {
@@ -245,18 +322,61 @@ namespace POKEMON_RED
             switch (playerLocation)
             {
                 case Location.Players_house:
+                    Text("Mother: Right. All boys leave home some day. It said so on TV");
+                    Text("Professor Oak, next door, is looking for you.");
+                    Thread.Sleep(2000);
+                    Console.Clear();
+                    textDisplayed.Clear();
+                    availableLocations.Add(Location.Kanto_Route_1);
+                    Interaction();
                     break;
                 case Location.Kanto_Route_1:
-                    if (hasBeenToKanto_Route1)
-                        Interaction();
-                    else
-                        hasBeenToKanto_Route1 = true;
+                    LoadTexts("route1");
+                    Text("route1", "a");
+                    Thread.Sleep(2000);
+                    Console.Clear();
+                    textDisplayed.Clear();
+                    playerLocation = Location.Professor_Oaks_Laboratory;
+                    NewLocation();
                     break;
                 case Location.Professor_Oaks_Laboratory:
-                    if (hasBeenToProfessor_Oaks_Laboratory)
-                        Interaction();
-                    else
-                        hasBeenToProfessor_Oaks_Laboratory = true;
+                    if (hasStarterPokemon == false)
+                    {
+                        Text($"{rivalName}: Gramps! I'm fed up with waiting!");
+                        Text($"Oak: {rivalName}? Let me think... Oh, that's right, I told you to come!");
+                        Text("Just wait!");
+                        Text($"Here, {playerName}! There are 3 POKEMON here! Haha! They are inside the");
+                        Text("POKE BALLS. When I was young, I was a serious POKEMON trainer.");
+                        Text("In my old age, I have only 3 left, but you can have one! Choose!");
+                        Text($"{rivalName}: Hey! Gramps! What about me?");
+                        Text($"Oak: Be patient! {rivalName}, you can have one too!");
+                        Text($"Now, {playerName}, which POKEMON do you want?");
+                        Text("1. Bulbasaur      2. Charmander       3. Squirtle");
+                        string userInput = GetUserInput(1);
+                        while (userInput != "1" || userInput != "2" || userInput != "3")
+                        {
+                            Console.Clear();
+                            Text("1. Bulbasaur      2. Charmander       3. Squirtle");
+                            userInput = GetUserInput(1);
+                        }
+                        hasStarterPokemon = true;
+                        switch (userInput)
+                        {
+                            case "1":
+                                playerPokemons.Add(new Pokémon(PokémonNames.Bulbasaur, 5, Genders.Male));
+                                this.rivalsPokemon.Add(new Pokémon(PokémonNames.Charmander, 5, Genders.Male));
+                                
+                                break;
+                            case "2":
+                                playerPokemons.Add(new Pokémon(PokémonNames.Charmander, 5, Genders.Male));
+                                this.rivalsPokemon.Add(new Pokémon(PokémonNames.Squirtle, 5, Genders.Male));
+                                break;
+                            case "3":
+                                playerPokemons.Add(new Pokémon(PokémonNames.Squirtle, 5, Genders.Male));
+                                this.rivalsPokemon.Add(new Pokémon(PokémonNames.Bulbasaur, 5, Genders.Male));
+                                break;
+                        }
+                    }
                     break;
             }
         }

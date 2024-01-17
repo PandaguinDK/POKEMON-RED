@@ -1,0 +1,2 @@
+a;Oak: If a wild POKEMON appears, your POKEMON can fight against it!/Blue: My POKEMON looks a lot stronger.
+b;Blue: Wait RED! Let's check out our POKEMON! Come on, I'll take you on!

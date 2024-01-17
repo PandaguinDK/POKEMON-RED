@@ -6,19 +6,54 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static POKEMON_RED.Battle;
 
 namespace POKEMON_RED
 {
     public class Battle
     {
-        private readonly Pokémon opponentPokémon;
+        int textTime = 2000;
+        List<string> textDisplayed;
+
+        public MoveInfoHelper moveInfoHelper = new();
+
+        public Pokémon trainerActivePokémon {  get; set; }
+        public Pokémon opponentActivePokémon { get; set; }
+
+        public List<Pokémon> opponentPokémon { get; set; }
+        public List<Pokémon> trainerPokémon { get; set; }
+
+        public List<Types> opponentPokémonType { get; set; }
+        public List<Types> trainerPokémonType { get; set; }
+
+        public string trainerName { get; set; }
+        public string opponentName { get; set; }
         
 
-        public Battle(Pokémon trainerPokémon, Pokémon opponentPokémon)
+        public Battle(List<Pokémon> trainerPokémon, List<Pokémon> opponentPokémon, string trainerName, string opponentName)
         {
             this.opponentPokémon = opponentPokémon;
+            this.trainerPokémon = trainerPokémon;
+            this.opponentActivePokémon = opponentPokémon[1];
+            this.trainerActivePokémon = trainerPokémon[0];
+            this.trainerName = trainerName;
+            this.opponentName = opponentName;
+
+            Text($"A battle has started between {trainerName} and {opponentName}!");
+            Thread.Sleep(2000);
+            BattleInterface();
+            
+
+            //TypesInfoHelper typesInfoHelper = new();
+            //PokémonTypesAttribute trainerPokemonTypeInfo = new TypesInfoHelper().GetTypeInfoAttribute(trainerPokémon.name);
+            //PokémonTypesAttribute opponentPokémonTypeInfo = new TypesInfoHelper().GetTypeInfoAttribute(opponentPokémon.name);
+
+            //trainerPokémon.type = trainerPokemonTypeInfo.Typing;
+            //opponentPokémon.type = opponentPokémonTypeInfo.Typing;
+            
         }
 
+       
         //public bool Attack(Moves moveToUseOnOpponent)
         //{
         //    var IsDead = opponentPokémon.Attack(moveToUseOnOpponent);
@@ -28,12 +63,145 @@ namespace POKEMON_RED
         //    return IsDead;
         //}
 
-        public double CalculateDamage(Pokémon hittingPokemon, Pokémon defendingPokemon, Moves move)
+        public void BattleInterface()
         {
-            MoveInfoHelper moveInfoHelper = new();
 
-            MoveInfoAttribute moveInfo = moveInfoHelper.GetMoveInfoAttribute(Moves.Double_Slap);
+            Text($"What do you want to do {trainerName}?");
+            Thread.Sleep(1000);
+            Console.WriteLine("1. Attack, 2. Switch, 3. Bag, 4. Run");
 
+            Console.WriteLine($"{trainerActivePokémon.name}: {trainerActivePokémon.pokémonHP}                   {opponentActivePokémon.name}: {opponentActivePokémon.pokémonHP}");
+            switch (GetUserInput(4))
+            {
+                case 1:
+                    AttackMenu(); 
+                    break;
+                case 2:
+                    SwitchMenu();
+                    break;
+                case 3:
+                    BagMenu();
+                    break;
+                case 4:
+                    Run();
+                    break;
+            }
+        }
+
+        public void AttackMenu()
+        {
+            Text($"Which attack do you want to use {trainerName}?");
+            Thread.Sleep(1000);
+            Console.WriteLine($"1. {trainerActivePokémon.moves[0]}, 2. {trainerActivePokémon.moves[1]}, 3. {trainerActivePokémon.moves[2]}, 4. {trainerActivePokémon.moves[3]}");
+            switch (GetUserInput(4))
+            {
+                case 1:
+                    if (trainerActivePokémon.moves[0] == Moves.NONE)
+                    {
+                        ErrorMessage("You have no move here", 2, true);
+                        AttackMenu();
+                    }
+                    CalculateDamage(trainerActivePokémon, opponentActivePokémon, trainerActivePokémon.moves[0]);
+                    break;
+                case 2:
+                    if (trainerActivePokémon.moves[1] == Moves.NONE)
+                    {
+                        ErrorMessage("You have no move here", 2, true);
+                        AttackMenu();
+                    }
+                    CalculateDamage(trainerActivePokémon, opponentActivePokémon, trainerActivePokémon.moves[1]);
+                    break;
+                case 3:
+                    if (trainerActivePokémon.moves[2] == Moves.NONE)
+                    {
+                        ErrorMessage("You have no move here", 2, true);
+                        AttackMenu();
+                    }
+                    CalculateDamage(trainerActivePokémon, opponentActivePokémon, trainerActivePokémon.moves[2]);
+                    break;
+                case 4:
+                    if (trainerActivePokémon.moves[3] == Moves.NONE)
+                    {
+                        ErrorMessage("You have no move here", 2, true);
+                        AttackMenu();
+                    }
+                    CalculateDamage(trainerActivePokémon, opponentActivePokémon, trainerActivePokémon.moves[3]);
+                    break;
+            }
+            EnemyMove();
+            Thread.Sleep(5000);
+            Console.Clear();
+
+            int faintedTrainerCount = GetFaintedAmount(trainerPokémon);
+            int faintedEnemyCount = GetFaintedAmount(opponentPokémon);
+
+            if (faintedTrainerCount == trainerPokémon.Count)
+            {
+                Console.WriteLine("All your pokemon fainted");
+                Thread.Sleep(5000);
+                return;
+            }
+
+            if (faintedEnemyCount == opponentPokémon.Count)
+            {
+                Console.WriteLine("You won the battle!");
+                Thread.Sleep(5000);
+                return;
+            }
+            BattleInterface();
+        }
+
+        public void SwitchMenu()
+        {
+
+        }
+
+        public void BagMenu()
+        {
+
+        }
+
+        public void Run()
+        {
+
+        }
+
+        public int GetFaintedAmount(List<Pokémon> pokemons)
+        {
+            int faintedAmount = 0;
+            foreach (Pokémon pokemon in pokemons)
+            {
+                faintedAmount++;
+            }
+            return faintedAmount;
+        }
+
+        public void EnemyMove()
+        {
+            int opponentTrainerPokemonHP = opponentActivePokémon.pokémonHP;
+            foreach (Moves move in opponentActivePokémon.moves)
+            {
+                if (GetSuperEffectiveness(opponentActivePokémon.type[0], moveInfoHelper.GetMoveInfoAttribute(move).Typing) == Effectiveness.SUPER_EFFECTIVE && GetSuperEffectiveness(opponentActivePokémon.type[1], moveInfoHelper.GetMoveInfoAttribute(move).Typing) == Effectiveness.SUPER_EFFECTIVE)
+                {
+                    CalculateDamage(opponentActivePokémon, trainerActivePokémon, move);
+                    Console.WriteLine($"{opponentActivePokémon.name} used {move} and dealt {opponentTrainerPokemonHP - trainerActivePokémon.pokémonHP} damage!");
+                    return;
+                }
+                else if (GetSuperEffectiveness(opponentActivePokémon.type[1], moveInfoHelper.GetMoveInfoAttribute(move).Typing) == Effectiveness.SUPER_EFFECTIVE || GetSuperEffectiveness(opponentActivePokémon.type[1], moveInfoHelper.GetMoveInfoAttribute(move).Typing) == Effectiveness.SUPER_EFFECTIVE)
+                {
+                    CalculateDamage(opponentActivePokémon, trainerActivePokémon, move);
+                    Console.WriteLine($"{opponentActivePokémon.name} used {move} and dealt {opponentTrainerPokemonHP - trainerActivePokémon.pokémonHP} damage!");
+                    return;
+                }
+            }
+            CalculateDamage(opponentActivePokémon, trainerActivePokémon, opponentActivePokémon.moves[0]);
+            Console.WriteLine($"{opponentActivePokémon.name} used {opponentActivePokémon.moves[0]} and dealt {opponentTrainerPokemonHP - trainerActivePokémon.pokémonHP} damage!");
+            return;
+        }
+
+        public void CalculateDamage(Pokémon hittingPokemon, Pokémon defendingPokemon, Moves move)
+        {
+            MoveInfoAttribute moveInfo = moveInfoHelper.GetMoveInfoAttribute(move);
             Random rnd = new Random(DateTime.Now.Microsecond);
 
             int movePower = moveInfo.Power;
@@ -41,15 +209,49 @@ namespace POKEMON_RED
             Categories moveCategory = moveInfo.Category;
             int moveAccuracy = moveInfo.Accuracy;
             int movePP = moveInfo.PP;
-            double random = rnd.Next(217, 255) / 255;
+            double random = Convert.ToDouble(rnd.Next(217, 255)) / Convert.ToDouble(255);
 
             double AttackDefenseRatio = GetAttackDefenseRatio(hittingPokemon, defendingPokemon, moveCategory);
+
+            double Type1 = GetEffectivenessMultiplier(GetSuperEffectiveness(defendingPokemon.type[0], moveTyping));
+            double Type2 = GetEffectivenessMultiplier(GetSuperEffectiveness(defendingPokemon.type[1], moveTyping));
+
             double STAB = GetSTAB(hittingPokemon, moveTyping);
 
             int critical = 1;
-            double damage = ((((((2 * hittingPokemon.level * critical / 5) + 2) * movePower * AttackDefenseRatio) / 50) + 2) * STAB * GetSuperEffectiveness(defendingPokemon.type[0], moveTyping) * GetSuperEffectiveness(defendingPokemon.type[1], moveTyping) * random);
-            return damage;
+            double damage = (((((2 * hittingPokemon.level * critical) / 5 + 2) * movePower * AttackDefenseRatio) / 50 + 2) * STAB * Type1 * Type2 * random);
+            if (rnd.Next(0, 100) >= moveAccuracy)
+            {
+                Console.WriteLine($"{hittingPokemon.name} missed!");
+                return;
+            }
+            if (movePP > 0) defendingPokemon.pokémonHP -= (int)damage;
+            else if (move == Moves.Struggle) defendingPokemon.pokémonHP -= (int)damage;
+            else if (movePP < 1) CalculateDamage(hittingPokemon, defendingPokemon, Moves.Struggle);
+            movePP -= 1;
         }
+
+        public double GetEffectivenessMultiplier(Effectiveness effectiveness)
+        {
+            if (effectiveness == Effectiveness.SUPER_EFFECTIVE)
+            {
+                return 1.5;
+            }
+            else if (effectiveness == Effectiveness.NEUTRAL)
+            {
+                return 1;
+            }
+            else if (effectiveness == Effectiveness.RESISTS)
+            {
+                return 0.5;
+            }
+            else if (effectiveness == Effectiveness.IMMUNE)
+            {
+                return 0;
+            }
+            return -1;
+        }
+
         public double GetSTAB(Pokémon pokemon, Types moveType)
         {
             foreach (Types type in pokemon.type)
@@ -88,7 +290,7 @@ namespace POKEMON_RED
 
         }
 
-        public double GetSuperEffectiveness(Types defendingPokemonType, Types hittingMoveType)
+        public Effectiveness GetSuperEffectiveness(Types defendingPokemonType, Types hittingMoveType)
         {
             Effectiveness effectiveness = Effectiveness.UNASSIGNED;
             switch (hittingMoveType)
@@ -304,24 +506,63 @@ namespace POKEMON_RED
                     }
                     break;
             }
-
-            if (effectiveness == Effectiveness.SUPER_EFFECTIVE)
+            return effectiveness;
+        }
+        public void Text(string text)
+        {
+            Console.WriteLine(text);
+            return;
+            // Bool here makes sure it doesn't write the entire text twice.
+            bool displayPreviousText = false;
+            string message = null;
+            foreach (char c in text)
             {
-                return 1.5;
+                if (displayPreviousText)
+                {
+                    foreach (string previousText in textDisplayed)
+                    {
+                        Console.WriteLine(previousText);
+                    }
+                }
+                displayPreviousText = true;
+                message += c;
+                Console.WriteLine(message);
+                Thread.Sleep(1);
+                Console.Clear();
             }
-            else if (effectiveness == Effectiveness.NEUTRAL)
+            textDisplayed.Add(text);
+            foreach (string previousText in textDisplayed)
             {
-                return 1;
+                Console.WriteLine(previousText);
             }
-            else if (effectiveness == Effectiveness.RESISTS)
+            Thread.Sleep(textTime);
+        }
+        public int GetUserInput(int maxLength)
+        {
+            int userInput = 0;
+            try
             {
-                return 0.5;
+                userInput = Convert.ToInt32(Console.ReadLine());
             }
-            else if (effectiveness == Effectiveness.IMMUNE)
+            catch (FormatException)
             {
-                return 0;
+                ErrorMessage("Type a number, ", 0, false);
+                GetUserInput(maxLength);
             }
-            return -1;
+            if (userInput >= maxLength || userInput < 1)
+            {
+                ErrorMessage("Choose a smaller number", 0, false);
+                GetUserInput(maxLength);
+            }
+            return userInput;
+        }
+        public void ErrorMessage(string text, int delay, bool clear)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(text);
+            Console.ForegroundColor = ConsoleColor.White;
+            Thread.Sleep(delay * 1000);
+            if (clear) Console.Clear();
         }
     }
 }

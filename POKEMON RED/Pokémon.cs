@@ -32,24 +32,20 @@ namespace POKEMON_RED
         public PokémonTypesAttribute pokemonTypes { get; set; }
         public Dictionary<string, int> baseStats { get; set; }
 
-        public Pokémon()
-        {
-
-        }
-        
         public Pokémon(PokémonNames Name, int Level, Genders Gender)
         {
             MoveInfoHelper moveInfoHelper = new();
             MoveInfoAttribute moveInfo = moveInfoHelper.GetMoveInfoAttribute(Moves.Absorb);
-            TypesInfoHelper typesInfoHelper = new();
-            PokémonTypesAttribute typeInfo = new TypesInfoHelper().GetTypeInfoAttribute(name);
-
 
             this.name = Name;
-            this.type = typeInfo.Typing;
+
+            TypesInfoHelper typesInfoHelper = new();
+            PokémonTypesAttribute typeInfo = typesInfoHelper.GetTypeInfoAttribute(name);
+
+            this.type = typeInfo.Typings;
             this.level = Level;
             this.gender = Gender;
-            this.movesLearnset = GetMoves(Name);
+            this.movesLearnset = GetMoves(name);
             this.possibleMoves = GetPossibleMoves();
             this.moves = new Moves[4];
             this.stats = new int[6];
@@ -4089,16 +4085,6 @@ namespace POKEMON_RED
             }
             return baseStats;
         }
-
-        //public bool Attack(Moves moveToUseOnOpponent)
-        //{
-        //    //regn ud mod alle dine stats
-        //    this
-
-        //    //hvis hp == 0 return true (den er død)
-        //    return
-        //        //eellers false;
-        //}
     }
 
     public enum Effects
@@ -4118,6 +4104,7 @@ namespace POKEMON_RED
 
             if (memberInfo.Length > 0)
             {
+                //Retrieves the custom attributes
                 object[] attributes = memberInfo[0].GetCustomAttributes(typeof(MoveInfoAttribute), false);
 
                 if (attributes.Length > 0)
@@ -4160,6 +4147,8 @@ namespace POKEMON_RED
 
             if (memberInfo.Length > 0)
             {
+
+                //Retrieves the custom attributes
                 object[] attributes = memberInfo[0].GetCustomAttributes(typeof(PokémonTypesAttribute), false);
 
                 if (attributes.Length > 0)
@@ -4174,13 +4163,17 @@ namespace POKEMON_RED
 
     public class PokémonTypesAttribute : Attribute
     {
-        public List<Types> Typing = new();
+        public List<Types> Typings { get; set; }
 
 
         public PokémonTypesAttribute(Types typing, Types typing2)
         {
-            this.Typing.Add(typing);
-            this.Typing.Add(typing2);
+            List<Types> typings = new();
+
+            typings.Add(typing);
+            typings.Add(typing2);
+
+            this.Typings = typings;
         }
     }
 
@@ -4198,11 +4191,17 @@ namespace POKEMON_RED
     {
         [PokémonTypes(Types.GRASS, Types.POISON)]
         Bulbasaur,
+
+        [PokémonTypes(Types.GRASS, Types.POISON)]
         Ivysaur,
+
+        [PokémonTypes(Types.GRASS, Types.POISON)]
         Venusaur,
 
         [PokémonTypes(Types.FIRE, Types.NONE)]
         Charmander,
+
+        [PokémonTypes(Types.FIRE, Types.NONE)]
         Charmeleon,
 
         [PokémonTypes(Types.FIRE, Types.FLYING)]
@@ -4210,11 +4209,18 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Squirtle,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Wartortle,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Blastoise,
 
         [PokémonTypes(Types.BUG, Types.NONE)]
         Caterpie,
+
+
+        [PokémonTypes(Types.BUG, Types.NONE)]
         Metapod,
 
         [PokémonTypes(Types.BUG, Types.FLYING)]
@@ -4222,63 +4228,107 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.BUG, Types.POISON)]
         Weedle,
+
+        [PokémonTypes(Types.BUG, Types.POISON)]
         Kakuna,
+
+        [PokémonTypes(Types.BUG, Types.POISON)]
         Beedrill,
 
         [PokémonTypes(Types.NORMAL, Types.FLYING)]
         Pidgey,
+
+        [PokémonTypes(Types.NORMAL, Types.FLYING)]
         Pidgeotto,
+
+        [PokémonTypes(Types.NORMAL, Types.FLYING)]
         Pidgeot,
 
         [PokémonTypes(Types.NORMAL, Types.NONE)]
         Rattata,
+
+        [PokémonTypes(Types.NORMAL, Types.NONE)]
         Raticate,
+
+        [PokémonTypes(Types.NORMAL, Types.NONE)]
         Spearow,
+
+        [PokémonTypes(Types.NORMAL, Types.NONE)]
         Fearow,
 
         [PokémonTypes(Types.POISON, Types.NONE)]
         Ekans,
+
+        [PokémonTypes(Types.POISON, Types.NONE)]
         Arbok,
 
         [PokémonTypes(Types.ELECTRIC, Types.NONE)]
         Pikachu,
+
+        [PokémonTypes(Types.ELECTRIC, Types.NONE)]
         Raichu,
 
         [PokémonTypes(Types.GROUND, Types.NONE)]
         Sandshrew,
+
+        [PokémonTypes(Types.GROUND, Types.NONE)]
         Sandslash,
 
         [PokémonTypes(Types.POISON, Types.NONE)]
         Nidoran_Male,
+
+        [PokémonTypes(Types.POISON, Types.NONE)]
         Nidorina,
+
+        [PokémonTypes(Types.POISON, Types.NONE)]
         Nidoqueen,
+
+        [PokémonTypes(Types.POISON, Types.NONE)]
         Nidoran_Female,
+
+        [PokémonTypes(Types.POISON, Types.NONE)]
         Nidorino,
+
+        [PokémonTypes(Types.POISON, Types.NONE)]
         Nidoking,
 
         [PokémonTypes(Types.NORMAL, Types.NONE)]
         Clefairy,
+
+        [PokémonTypes(Types.NORMAL, Types.NONE)]
         Clefable,
 
         [PokémonTypes(Types.FIRE, Types.NONE)]
         Vulpix,
+
+        [PokémonTypes(Types.FIRE, Types.NONE)]
         Ninetales,
 
         [PokémonTypes(Types.NORMAL, Types.NONE)]
         Jigglypuff,
+
+        [PokémonTypes(Types.NORMAL, Types.NONE)]
         Wigglytuff,
 
         [PokémonTypes(Types.POISON, Types.FLYING)]
         Zubat,
+
+        [PokémonTypes(Types.POISON, Types.FLYING)]
         Golbat,
 
         [PokémonTypes(Types.GRASS, Types.POISON)]
         Oddish,
+
+        [PokémonTypes(Types.GRASS, Types.POISON)]
         Gloom,
+
+        [PokémonTypes(Types.GRASS, Types.POISON)]
         Vileplume,
 
         [PokémonTypes(Types.BUG, Types.GRASS)]
         Paras,
+
+        [PokémonTypes(Types.BUG, Types.GRASS)]
         Parasect,
 
         [PokémonTypes(Types.BUG, Types.POISON)]
@@ -4287,85 +4337,137 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.GROUND, Types.NONE)]
         Diglett,
+
+        [PokémonTypes(Types.GROUND, Types.NONE)]
         Dugtrio,
 
         [PokémonTypes(Types.NORMAL, Types.NONE)]
         Meowth,
+
+        [PokémonTypes(Types.NORMAL, Types.NONE)]
         Persian,
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Psyduck,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Golduck,
 
         [PokémonTypes(Types.FIGHTING, Types.NONE)]
         Mankey,
+
+        [PokémonTypes(Types.FIGHTING, Types.NONE)]
         Primeape,
 
         [PokémonTypes(Types.FIRE, Types.NONE)]
         Growlithe,
+
+        [PokémonTypes(Types.FIRE, Types.NONE)]
         Arcanine,
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Poliwag,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Poliwhirl,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Poliwrath,
 
         [PokémonTypes(Types.PSYCHIC, Types.NONE)]
         Abra,
+
+        [PokémonTypes(Types.PSYCHIC, Types.NONE)]
         Kadabra,
+
+        [PokémonTypes(Types.PSYCHIC, Types.NONE)]
         Alakazam,
 
         [PokémonTypes(Types.FIGHTING, Types.NONE)]
         Machop,
+
+        [PokémonTypes(Types.FIGHTING, Types.NONE)]
         Machoke,
+
+        [PokémonTypes(Types.FIGHTING, Types.NONE)]
         Machamp,
 
         [PokémonTypes(Types.GRASS, Types.POISON)]
         Bellsprout,
+
+        [PokémonTypes(Types.GRASS, Types.POISON)]
         Weepinbell,
+
+        [PokémonTypes(Types.GRASS, Types.POISON)]
         Victreebel,
 
         [PokémonTypes(Types.WATER, Types.POISON)]
         Tentacool,
+
+        [PokémonTypes(Types.WATER, Types.POISON)]
         Tentacruel,
 
         [PokémonTypes(Types.ROCK, Types.GROUND)]
         Geodude,
+
+        [PokémonTypes(Types.ROCK, Types.GROUND)]
         Graveler,
+
+        [PokémonTypes(Types.ROCK, Types.GROUND)]
         Golem,
 
         [PokémonTypes(Types.FIRE, Types.NONE)]
         Ponyta,
+
+        [PokémonTypes(Types.FIRE, Types.NONE)]
         Rapidash,
 
         [PokémonTypes(Types.WATER, Types.PSYCHIC)]
         Slowpoke,
+
+        [PokémonTypes(Types.WATER, Types.PSYCHIC)]
         Slowbro,
 
         [PokémonTypes(Types.ELECTRIC, Types.NONE)]
         Magnemite,
+
+        [PokémonTypes(Types.ELECTRIC, Types.NONE)]
         Magneton,
 
         [PokémonTypes(Types.NORMAL, Types.FLYING)]
         Farfetchd,
+
+        [PokémonTypes(Types.NORMAL, Types.FLYING)]
         Doduo,
+
+        [PokémonTypes(Types.NORMAL, Types.FLYING)]
         Dodrio,
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Seel,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Dewgong,
 
         [PokémonTypes(Types.POISON, Types.NONE)]
         Grimer,
+
+        [PokémonTypes(Types.POISON, Types.NONE)]
         Muk,
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Shellder,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Cloyster,
 
         [PokémonTypes(Types.GHOST, Types.POISON)]
         Gastly,
+
+        [PokémonTypes(Types.GHOST, Types.POISON)]
         Haunter,
+
+        [PokémonTypes(Types.GHOST, Types.POISON)]
         Gengar,
 
         [PokémonTypes(Types.ROCK, Types.GROUND)]
@@ -4373,26 +4475,38 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.PSYCHIC, Types.NONE)]
         Drowzee,
+
+        [PokémonTypes(Types.PSYCHIC, Types.NONE)]
         Hypno,
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Krabby,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Kingler,
 
         [PokémonTypes(Types.ELECTRIC, Types.NONE)]
         Voltorb,
+
+        [PokémonTypes(Types.ELECTRIC, Types.NONE)]
         Electrode,
 
         [PokémonTypes(Types.GRASS, Types.PSYCHIC)]
         Exeggcute,
+
+        [PokémonTypes(Types.GRASS, Types.PSYCHIC)]
         Exeggutor,
 
         [PokémonTypes(Types.GROUND, Types.NONE)]
         Cubone,
+
+        [PokémonTypes(Types.GROUND, Types.NONE)]
         Marowak,
 
         [PokémonTypes(Types.FIGHTING, Types.NONE)]
         Hitmonlee,
+
+        [PokémonTypes(Types.FIGHTING, Types.NONE)]
         Hitmonchan,
 
         [PokémonTypes(Types.NORMAL, Types.NONE)]
@@ -4400,10 +4514,14 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.POISON, Types.NONE)]
         Koffing,
+
+        [PokémonTypes(Types.POISON, Types.NONE)]
         Weezing,
 
         [PokémonTypes(Types.GROUND, Types.ROCK)]
         Rhyhorn,
+
+        [PokémonTypes(Types.GROUND, Types.ROCK)]
         Rhydon,
 
         [PokémonTypes(Types.NORMAL, Types.NONE)]
@@ -4417,14 +4535,20 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Horsea,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Seadra,
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Goldeen,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Seaking,
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Staryu,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Starmie,
 
         [PokémonTypes(Types.PSYCHIC, Types.NONE)]
@@ -4450,6 +4574,8 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.WATER, Types.NONE)]
         Magikarp,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Gyarados,
 
         [PokémonTypes(Types.WATER, Types.ICE)]
@@ -4460,8 +4586,14 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.NORMAL, Types.NONE)]
         Eevee,
+
+        [PokémonTypes(Types.WATER, Types.NONE)]
         Vaporeon,
+
+        [PokémonTypes(Types.ELECTRIC, Types.NONE)]
         Jolteon,
+
+        [PokémonTypes(Types.FIRE, Types.NONE)]
         Flareon,
 
         [PokémonTypes(Types.NORMAL, Types.NONE)]
@@ -4469,10 +4601,14 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.ROCK, Types.WATER)]
         Omanyte,
+
+        [PokémonTypes(Types.ROCK, Types.WATER)]
         Omastar,
 
         [PokémonTypes(Types.ROCK, Types.WATER)]
         Kabuto,
+
+        [PokémonTypes(Types.ROCK, Types.WATER)]
         Kabutops,
 
         [PokémonTypes(Types.ROCK, Types.FLYING)]
@@ -4492,22 +4628,28 @@ namespace POKEMON_RED
 
         [PokémonTypes(Types.DRAGON, Types.NONE)]
         Dratini,
+
+        [PokémonTypes(Types.DRAGON, Types.NONE)]
         Dragonair,
+
+        [PokémonTypes(Types.DRAGON, Types.FLYING)]
         Dragonite,
 
         [PokémonTypes(Types.PSYCHIC, Types.NONE)]
         Mewtwo,
+
+        [PokémonTypes(Types.PSYCHIC, Types.NONE)]
         Mew,
     }
 
     public enum Status
     {
+        NONE,
         Burned,
         Paralyzed,
         Frozen,
         Asleep,
-        Poisoned,
-        None
+        Poisoned
     }
 
     public enum Genders
@@ -4546,7 +4688,9 @@ namespace POKEMON_RED
 
     public enum Moves
     {
+        [MoveInfo(Types.NONE, Categories.STATUS, 0, 0, 0)]
         NONE,
+
         [MoveInfo(Types.GRASS, Categories.SPECIAL , 20, 100, 25)]
         Absorb,
 
@@ -4792,7 +4936,6 @@ namespace POKEMON_RED
 
         [MoveInfo(Types.NORMAL, Categories.PHYSICAL, 80, 85, 20)]
         Mega_Punch,
-
 
         [MoveInfo(Types.NORMAL, Categories.STATUS, -1, -1, 10)]
         Metronome,
