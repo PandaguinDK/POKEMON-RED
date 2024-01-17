@@ -12,13 +12,18 @@ namespace POKEMON_RED
 {
     public class Battle
     {
-        int textTime = 2000;
-        List<string> textDisplayed;
+        readonly int textTime = 1000;
+        public List<string> textDisplayed = new();
 
         public MoveInfoHelper moveInfoHelper = new();
 
         public Pokémon trainerActivePokémon {  get; set; }
         public Pokémon opponentActivePokémon { get; set; }
+        public int opponentActivePokémonNum { get; set; }
+
+        public int faintedTrainerCount { get;set; }
+
+        public int faintedEnemyCount { get; set; }
 
         public List<Pokémon> opponentPokémon { get; set; }
         public List<Pokémon> trainerPokémon { get; set; }
@@ -38,39 +43,53 @@ namespace POKEMON_RED
             this.trainerActivePokémon = trainerPokémon[0];
             this.trainerName = trainerName;
             this.opponentName = opponentName;
+            this.opponentActivePokémonNum = 0;
 
             Text($"A battle has started between {trainerName} and {opponentName}!");
             Thread.Sleep(2000);
             BattleInterface();
             
-
-            //TypesInfoHelper typesInfoHelper = new();
-            //PokémonTypesAttribute trainerPokemonTypeInfo = new TypesInfoHelper().GetTypeInfoAttribute(trainerPokémon.name);
-            //PokémonTypesAttribute opponentPokémonTypeInfo = new TypesInfoHelper().GetTypeInfoAttribute(opponentPokémon.name);
-
-            //trainerPokémon.type = trainerPokemonTypeInfo.Typing;
-            //opponentPokémon.type = opponentPokémonTypeInfo.Typing;
             
         }
 
-       
-        //public bool Attack(Moves moveToUseOnOpponent)
-        //{
-        //    var IsDead = opponentPokémon.Attack(moveToUseOnOpponent);
-
-        //    int damage = (())
-
-        //    return IsDead;
-        //}
 
         public void BattleInterface()
         {
+            if (trainerActivePokémon.pokémonHP <= 0) SwitchMenu();
+            if (opponentActivePokémon.pokémonHP <= 0)
+            {
+                opponentActivePokémonNum++;
+                try
+                {
+                    opponentActivePokémon = opponentPokémon[opponentActivePokémonNum];
+                }
+                //Catch here in case opponent trainer has no more Pokémon
+                catch (IndexOutOfRangeException)
+                {
 
+                }
+            }
+
+            this.faintedTrainerCount = GetFaintedAmount(trainerPokémon);
+            this.faintedEnemyCount = GetFaintedAmount(opponentPokémon);
+
+            if (faintedTrainerCount == trainerPokémon.Count)
+            {
+                Text("All your pokemon fainted, and you were taken to the closest Pokémon Center.");
+                Thread.Sleep(5000);
+                return;
+            }
+
+            if (faintedEnemyCount == opponentPokémon.Count)
+            {
+                Text("You won the battle!");
+                Thread.Sleep(5000);
+                return;
+            }
             Text($"What do you want to do {trainerName}?");
-            Thread.Sleep(1000);
             Console.WriteLine("1. Attack, 2. Switch, 3. Bag, 4. Run");
 
-            Console.WriteLine($"{trainerActivePokémon.name}: {trainerActivePokémon.pokémonHP}                   {opponentActivePokémon.name}: {opponentActivePokémon.pokémonHP}");
+            Text($"{trainerActivePokémon.name}: {trainerActivePokémon.pokémonHP}                   {opponentActivePokémon.name}: {opponentActivePokémon.pokémonHP}");
             switch (GetUserInput(4))
             {
                 case 1:
@@ -131,28 +150,32 @@ namespace POKEMON_RED
             EnemyMove();
             Thread.Sleep(5000);
             Console.Clear();
-
-            int faintedTrainerCount = GetFaintedAmount(trainerPokémon);
-            int faintedEnemyCount = GetFaintedAmount(opponentPokémon);
-
-            if (faintedTrainerCount == trainerPokémon.Count)
-            {
-                Console.WriteLine("All your pokemon fainted");
-                Thread.Sleep(5000);
-                return;
-            }
-
-            if (faintedEnemyCount == opponentPokémon.Count)
-            {
-                Console.WriteLine("You won the battle!");
-                Thread.Sleep(5000);
-                return;
-            }
+            textDisplayed.Clear();
             BattleInterface();
         }
 
         public void SwitchMenu()
         {
+            int i = 1;
+            List<int> possibleIndex = new();
+            Text("Which Pokémon do you want to switch to?");
+            for (int n = 0; n <= trainerPokémon.Count-1; n++)
+            {
+                if (trainerPokémon[n].pokémonHP <= 0)
+                {
+                    possibleIndex.Add(n);
+                    Console.WriteLine($"{i}. {trainerPokémon[n].name}");
+                    i++;
+                }
+                if (n == trainerPokémon.Count -1)
+                {
+                    Console.WriteLine($"{i+1}. Go back");
+                    possibleIndex.Add(n);
+                }
+            }
+            int userInput = GetUserInput(i) - 1;
+            if (userInput == possibleIndex.Count - 1) AttackMenu();
+            trainerActivePokémon = trainerPokémon[possibleIndex[userInput]];
 
         }
 
@@ -171,7 +194,7 @@ namespace POKEMON_RED
             int faintedAmount = 0;
             foreach (Pokémon pokemon in pokemons)
             {
-                faintedAmount++;
+                if (pokemon.pokémonHP <= 0) faintedAmount++;
             }
             return faintedAmount;
         }
@@ -510,8 +533,6 @@ namespace POKEMON_RED
         }
         public void Text(string text)
         {
-            Console.WriteLine(text);
-            return;
             // Bool here makes sure it doesn't write the entire text twice.
             bool displayPreviousText = false;
             string message = null;

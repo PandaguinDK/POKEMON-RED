@@ -7,7 +7,8 @@ namespace POKEMON_RED
     {
         static void Main()
         {
-            Game game = new Game();
+            Console.ForegroundColor = ConsoleColor.White;
+            Game game = new();
         }
     }
 }

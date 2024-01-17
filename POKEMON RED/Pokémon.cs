@@ -34,9 +34,6 @@ namespace POKEMON_RED
 
         public Pokémon(PokémonNames Name, int Level, Genders Gender)
         {
-            MoveInfoHelper moveInfoHelper = new();
-            MoveInfoAttribute moveInfo = moveInfoHelper.GetMoveInfoAttribute(Moves.Absorb);
-
             this.name = Name;
 
             TypesInfoHelper typesInfoHelper = new();
@@ -101,7 +98,7 @@ namespace POKEMON_RED
                 }
 
                 //  Catch here in case the pokemon doesn't learn a move at a level
-                catch (KeyNotFoundException ex)
+                catch (KeyNotFoundException)
                 {
 
                 }
